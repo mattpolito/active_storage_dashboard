@@ -1,0 +1,19 @@
+<turbo-frame id="dashboard_storage_usage">
+  <div class="storage-summary">
+    <div class="storage-total">
+      <div class="storage-label">Total Storage Used</div>
+      <div class="storage-value"><%= format_bytes(@total_storage) %></div>
+    </div>
+
+    <div class="storage-metrics">
+      <div class="storage-metric">
+        <div class="storage-metric-title">Average File Size</div>
+        <div class="storage-metric-value"><%= @blobs_count > 0 ? format_bytes(@total_storage / @blobs_count) : '0 B' %></div>
+      </div>
+      <div class="storage-metric">
+        <div class="storage-metric-title">Largest File</div>
+        <div class="storage-metric-value"><%= format_bytes(@largest_blob&.byte_size || 0) %></div>
+      </div>
+    </div>
+  </div>
+</turbo-frame>

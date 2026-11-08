@@ -3,6 +3,10 @@
 <head>
   <title>Active Storage Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="module">
+    import * as Turbo from "https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.12/dist/turbo.es2017-esm.js"
+    Turbo.session.drive = false
+  </script>
   <style>
     :root {
       --primary-color: #4a6bef;

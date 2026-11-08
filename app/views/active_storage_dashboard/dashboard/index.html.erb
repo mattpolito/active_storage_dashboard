@@ -12,7 +12,11 @@
 
         
       </div>
-      <div class="stat-card-value count-up" data-value="<%= @blobs_count %>"><%= @blobs_count %></div>
+      <%= render("active_storage_dashboard/dashboard/lazy_frame", 
+        id: "dashboard_stat_blobs", 
+        src: active_storage_dashboard.dashboard_stat_path("blobs"), 
+        stat: true
+      ) %>
       <div class="stat-card-label">Total Blobs</div>
     </div>
     
@@ -23,7 +27,11 @@
 </svg>
 
       </div>
-      <div class="stat-card-value count-up" data-value="<%= @attachments_count %>"><%= @attachments_count %></div>
+      <%= render("active_storage_dashboard/dashboard/lazy_frame", 
+        id: "dashboard_stat_attachments", 
+        src: active_storage_dashboard.dashboard_stat_path("attachments"), 
+        stat: true
+      ) %>
       <div class="stat-card-label">Total Attachments</div>
     </div>
     
@@ -34,7 +42,11 @@
 </svg>
 
       </div>
-      <div class="stat-card-value count-up" data-value="<%= @variant_records_count %>"><%= @variant_records_count %></div>
+      <%= render("active_storage_dashboard/dashboard/lazy_frame", 
+        id: "dashboard_stat_variant_records", 
+        src: active_storage_dashboard.dashboard_stat_path("variant_records"), 
+        stat: true
+      ) %>
       <div class="stat-card-label">Variant Records</div>
     </div>
 
@@ -45,7 +57,11 @@
 </svg>
 
       </div>
-      <div class="stat-card-value count-up" data-value="<%= @purgable_blobs.count %>"><%= @purgable_blobs.count %></div>
+      <%= render("active_storage_dashboard/dashboard/lazy_frame", 
+        id: "dashboard_stat_purgable_blobs", 
+        src: active_storage_dashboard.dashboard_stat_path("purgable_blobs"), 
+        stat: true
+      ) %>
       <div class="stat-card-label">Purgable Blobs</div>
     </div>
     
@@ -56,7 +72,11 @@
 </svg>
 
       </div>
-      <div class="stat-card-value"><%= format_bytes(@total_storage) %></div>
+      <%= render("active_storage_dashboard/dashboard/lazy_frame", 
+        id: "dashboard_stat_total_storage", 
+        src: active_storage_dashboard.dashboard_stat_path("total_storage"), 
+        stat: true
+      ) %>
       <div class="stat-card-label">Total Storage</div>
     </div>
   </div>
@@ -70,25 +90,10 @@
         <div class="card-header-title">Content Type Distribution</div>
       </div>
       <div class="card-body">
-        <% if @content_types.any? %>
-          <div class="content-types-list">
-            <% total = @content_types.sum { |_, count| count } %>
-            <% @content_types.each do |content_type, count| %>
-              <div class="content-type-item">
-                <div class="content-type-info">
-                  <span class="content-type-badge"><%= content_type || 'Unknown' %></span>
-                  <span class="content-type-count"><%= count %> files</span>
-                </div>
-                <div class="progress-bar">
-                  <div class="progress-fill" style="width: <%= (count.to_f / total * 100).round(1) %>%"></div>
-                  <div class="progress-text"><%= (count.to_f / total * 100).round(1) %>%</div>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        <% else %>
-          <p class="no-data-message">No content types found.</p>
-        <% end %>
+        <%= render("active_storage_dashboard/dashboard/lazy_frame", 
+          id: "dashboard_content_types", 
+          src: active_storage_dashboard.dashboard_content_types_path, 
+        ) %>
       </div>
     </div>
     
@@ -147,23 +152,10 @@
         <div class="card-header-title">Storage Usage</div>
       </div>
       <div class="card-body">
-        <div class="storage-summary">
-          <div class="storage-total">
-            <div class="storage-label">Total Storage Used</div>
-            <div class="storage-value"><%= format_bytes(@total_storage) %></div>
-          </div>
-          
-          <div class="storage-metrics">
-            <div class="storage-metric">
-              <div class="storage-metric-title">Average File Size</div>
-              <div class="storage-metric-value"><%= @blobs_count > 0 ? format_bytes(@total_storage / @blobs_count) : '0 B' %></div>
-            </div>
-            <div class="storage-metric">
-              <div class="storage-metric-title">Largest File</div>
-              <div class="storage-metric-value"><%= format_bytes(@largest_blob&.byte_size || 0) %></div>
-            </div>
-          </div>
-        </div>
+        <%= render("active_storage_dashboard/dashboard/lazy_frame", 
+          id: "dashboard_storage_usage", 
+          src: active_storage_dashboard.dashboard_storage_usage_path, 
+        ) %>
       </div>
     </div>
   
@@ -248,6 +240,21 @@
     border-radius: 2px;
   }
   
+  /* Lazy-loaded Turbo Frames */
+  turbo-frame {
+    display: block;
+  }
+
+  .lazy-loading {
+    color: var(--secondary-color);
+    animation: lazy-pulse 1.2s ease-in-out infinite;
+  }
+
+  @keyframes lazy-pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
   /* Stats grid */
   .dashboard-overview {
     margin-bottom: 2rem;
@@ -845,14 +852,18 @@
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  // Stats and cards are lazy-loaded Turbo Frames, so animate their contents
+  // as each frame arrives rather than on DOMContentLoaded.
+  document.addEventListener('turbo:frame-load', function(event) {
+    const frame = event.target;
+
     // CountUp animation for stat values
-    document.querySelectorAll('.count-up').forEach(function(element) {
+    frame.querySelectorAll('.count-up').forEach(function(element) {
       const target = parseInt(element.getAttribute('data-value'));
       const duration = 1500;
       const step = Math.ceil(target / (duration / 16)); // 16ms per frame (approx 60fps)
       let current = 0;
-      
+
       function updateCount() {
         current += step;
         if (current >= target) {
@@ -862,41 +873,20 @@
         element.textContent = current.toLocaleString();
         requestAnimationFrame(updateCount);
       }
-      
+
       updateCount();
     });
-    
-    // Animate progress bars on scroll
-    const progressBars = document.querySelectorAll('.progress-fill');
-    // Track which progress bars have already been animated
-    const animatedBars = new Set();
-    
-    const animateProgressBars = () => {
-      progressBars.forEach((bar, index) => {
-        const rect = bar.getBoundingClientRect();
-        const isVisible = (rect.top <= window.innerHeight && rect.bottom >= 0);
-        
-        if (isVisible && !animatedBars.has(index)) {
-          // Store the target width
-          const targetWidth = bar.style.width;
-          // Set initial width to 0
-          bar.style.width = '0%';
-          // Add to our set of animated bars
-          animatedBars.add(index);
-          
-          // Animate to target width
-          setTimeout(() => {
-            bar.style.transition = 'width 0.8s ease-out';
-            bar.style.width = targetWidth;
-          }, 100);
-        }
-      });
-    };
-    
-    // Initial animation
-    animateProgressBars();
-    
-    // Animate on scroll, but only for newly visible bars
-    window.addEventListener('scroll', animateProgressBars);
+
+    // Animate progress bars. Frames load lazily when scrolled into view, so
+    // the bars are already visible by the time they arrive.
+    frame.querySelectorAll('.progress-fill').forEach(function(bar) {
+      const targetWidth = bar.style.width;
+      bar.style.width = '0%';
+
+      setTimeout(() => {
+        bar.style.transition = 'width 0.8s ease-out';
+        bar.style.width = targetWidth;
+      }, 100);
+    });
   });
 </script> 

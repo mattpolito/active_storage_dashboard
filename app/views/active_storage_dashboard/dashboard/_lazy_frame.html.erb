@@ -1,0 +1,9 @@
+<%# locals: (id:, src:, stat: nil) %>
+
+<turbo-frame id="<%= id %>" src="<%= src %>" loading="lazy">
+  <% if stat %>
+    <div class="stat-card-value lazy-loading">&hellip;</div>
+  <% else %>
+    <p class="no-data-message lazy-loading">Loading&hellip;</p>
+  <% end %>
+</turbo-frame>

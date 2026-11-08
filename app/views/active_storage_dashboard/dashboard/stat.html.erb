@@ -1,0 +1,7 @@
+<turbo-frame id="dashboard_stat_<%= @stat %>">
+  <% if @stat == 'total_storage' %>
+    <div class="stat-card-value"><%= format_bytes(@value) %></div>
+  <% else %>
+    <div class="stat-card-value count-up" data-value="<%= @value %>"><%= @value %></div>
+  <% end %>
+</turbo-frame>

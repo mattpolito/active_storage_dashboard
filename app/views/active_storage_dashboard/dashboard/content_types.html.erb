@@ -1,0 +1,21 @@
+<turbo-frame id="dashboard_content_types">
+  <% if @content_types.any? %>
+    <div class="content-types-list">
+      <% total = @content_types.sum { |_, count| count } %>
+      <% @content_types.each do |content_type, count| %>
+        <div class="content-type-item">
+          <div class="content-type-info">
+            <span class="content-type-badge"><%= content_type || 'Unknown' %></span>
+            <span class="content-type-count"><%= count %> files</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: <%= (count.to_f / total * 100).round(1) %>%"></div>
+            <div class="progress-text"><%= (count.to_f / total * 100).round(1) %>%</div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="no-data-message">No content types found.</p>
+  <% end %>
+</turbo-frame>

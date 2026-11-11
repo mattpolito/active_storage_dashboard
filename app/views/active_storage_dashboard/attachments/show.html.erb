@@ -6,7 +6,7 @@
     <div class="card-body media-preview">
       <% if @blob.content_type&.start_with?('image/') %>
         <div class="image-preview">
-          <img src="<%= download_blob_path(@blob, disposition: 'inline') %>" alt="<%= @blob.filename %>" />
+          <img src="<%= download_blob_path(@blob, disposition: 'inline') %>" alt="<%= @blob.filename %>">
         </div>
       <% elsif @blob.content_type&.start_with?('video/') %>
         <div class="video-preview">
@@ -25,7 +25,7 @@
       <% elsif @blob.content_type == 'application/pdf' %>
         <div class="pdf-preview">
           <object data="<%= download_blob_path(@blob, disposition: 'inline') %>" type="application/pdf" width="100%" height="600px">
-            <p>It appears your browser doesn't support embedded PDFs. 
+            <p>It appears your browser doesn't support embedded PDFs.
                <a href="<%= download_blob_path(@blob, disposition: 'inline') %>">Click here to download the PDF</a>.</p>
           </object>
         </div>
@@ -168,4 +168,4 @@
     max-width: 100%;
     display: inline-block;
   }
-</style> 
+</style>

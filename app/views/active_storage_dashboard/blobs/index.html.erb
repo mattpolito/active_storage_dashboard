@@ -9,7 +9,7 @@
       </svg>
     </button>
   </div>
-  
+
   <form action="<%= blobs_path %>" method="get" class="filters-form" id="filters-form">
     <div class="filter-row">
       <div class="filter-group">
@@ -63,7 +63,7 @@
         </select>
       </div>
     </div>
-    
+
     <div class="filter-actions">
       <button type="submit" class="btn btn-primary">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="action-icon">
@@ -117,7 +117,7 @@
           </tbody>
         </table>
       </div>
-      
+
       <div id="card-view" style="display: none;">
         <div class="blob-cards">
           <% @blobs.each do |blob| %>
@@ -147,7 +147,7 @@
                 <h3 class="filename" title="<%= blob.filename %>"><%= blob.filename %></h3>
                 <p class="record-info">ID: <%= blob.id %></p>
                 <p class="file-info">
-                  <%= format_bytes(blob.byte_size) %> • 
+                  <%= format_bytes(blob.byte_size) %> •
                   <%= blob.content_type || 'Unknown type' %>
                 </p>
                 <p class="created-at">
@@ -162,7 +162,7 @@
           <% end %>
         </div>
       </div>
-      
+
       <%= pagination_links(@total_count) %>
     <% else %>
       <p>No blobs found.</p>
@@ -491,4 +491,4 @@
       }
     });
   });
-</script> 
+</script>

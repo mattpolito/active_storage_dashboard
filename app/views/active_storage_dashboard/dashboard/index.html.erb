@@ -163,60 +163,11 @@
       </div>
 
       <div class="card-body">
-        <% if @recent_blobs.any? %>
-          <div class="activity-timeline">
-            <% @recent_blobs.each_with_index do |blob, index| %>
-              <div class="activity-item">
-                <div class="activity-icon">
-                  <% if blob.content_type&.start_with?('image/') %>
-                    <div class="file-type-icon image-icon">IMG</div>
-                  <% elsif blob.content_type&.start_with?('video/') %>
-                    <div class="file-type-icon video-icon">VID</div>
-                  <% elsif blob.content_type&.start_with?('audio/') %>
-                    <div class="file-type-icon audio-icon">AUD</div>
-                  <% elsif blob.content_type&.start_with?('application/pdf') %>
-                    <div class="file-type-icon pdf-icon">PDF</div>
-                  <% else %>
-                    <div class="file-type-icon">
-                      <%= blob.content_type&.split('/')&.last&.upcase&.first(3) || 'FILE' %>
-                    </div>
-                  <% end %>
-                </div>
-
-                <div class="activity-content">
-                  <div
-                    class="activity-title filename-truncate"
-                    title="<%= blob.filename %>"
-                  >
-                    <%= truncate(blob.filename.to_s, length: 40) %>
-                  </div>
-
-                  <div class="activity-meta">
-                    <span class="activity-time"><%= time_ago_in_words(blob.created_at, locale: :en) %> ago</span>
-                    <span class="activity-size"><%= format_bytes(blob.byte_size) %></span>
-                  </div>
-
-                  <div class="activity-actions">
-                    <a href="<%= blob_path(blob) %>" class="btn btn-sm">View Details</a>
-
-                    <a
-                      href="<%= download_blob_path(blob) %>"
-                      class="btn btn-sm btn-outline"
-                    >
-                      Download
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <% if index < @recent_blobs.size - 1 %>
-                <div class="activity-divider"></div>
-              <% end %>
-            <% end %>
-          </div>
-        <% else %>
-          <p class="no-data-message">No recent activity found.</p>
-        <% end %>
+        <%= render("active_storage_dashboard/dashboard/lazy_frame", 
+          id: "dashboard_latest_activity", 
+          src: active_storage_dashboard.dashboard_latest_activity_path, 
+          target: "_top",
+        ) %>
       </div>
     </div>
   </div>
@@ -242,51 +193,11 @@
       </div>
 
       <div class="card-body">
-        <% if @recent_blobs.any? %>
-          <div class="recent-files-grid">
-            <% @recent_blobs.each do |blob| %>
-              <div class="recent-file-card">
-                <div class="file-preview">
-                  <% if blob.content_type&.start_with?('image/') %>
-                    <img
-                      src="<%= download_blob_path(blob, disposition: 'inline') %>"
-                      alt="<%= blob.filename %>"
-                      class="file-thumbnail"
-                    >
-                  <% elsif blob.content_type&.start_with?('video/') %>
-                    <div class="file-type-icon video-icon">VID</div>
-                  <% elsif blob.content_type&.start_with?('audio/') %>
-                    <div class="file-type-icon audio-icon">AUD</div>
-                  <% elsif blob.content_type&.start_with?('application/pdf') %>
-                    <div class="file-type-icon pdf-icon">PDF</div>
-                  <% else %>
-                    <div class="file-type-icon">
-                      <%= blob.content_type&.split('/')&.last&.upcase&.first(3) || 'FILE' %>
-                    </div>
-                  <% end %>
-                </div>
-
-                <div class="file-info">
-                  <h3
-                    class="file-name filename-truncate"
-                    title="<%= blob.filename %>"
-                  >
-                    <%= blob.filename %>
-                  </h3>
-
-                  <div class="file-meta">
-                    <span class="file-size"><%= format_bytes(blob.byte_size) %></span>
-                    <span class="file-date"><%= blob.created_at.strftime('%Y-%m-%d %H:%M') %></span>
-                  </div>
-
-                  <a href="<%= blob_path(blob) %>" class="view-details-btn">View Details</a>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        <% else %>
-          <p class="no-data-message">No files found.</p>
-        <% end %>
+        <%= render("active_storage_dashboard/dashboard/lazy_frame", 
+          id: "dashboard_recent_files", 
+          src: active_storage_dashboard.dashboard_recent_files_path, 
+          target: "_top",
+        ) %>
       </div>
     </div>
   </div>

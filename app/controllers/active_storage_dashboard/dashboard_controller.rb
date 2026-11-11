@@ -18,7 +18,6 @@ module ActiveStorageDashboard
     layout false, except: :index
 
     def index
-      @recent_blobs = ActiveStorage::Blob.order(created_at: :desc).limit(5)
     end
 
     def stat
@@ -32,10 +31,24 @@ module ActiveStorageDashboard
       @content_types = ActiveStorage::Blob.group(:content_type).count.sort_by { |_, count| -count }.first(5)
     end
 
+    def latest_activity
+      @recent_blobs = recent_blobs
+    end
+
+    def recent_files
+      @recent_blobs = recent_blobs
+    end
+
     def storage_usage
       @blobs_count = ActiveStorage::Blob.count
       @total_storage = ActiveStorage::Blob.sum(:byte_size)
       @largest_blob = ActiveStorage::Blob.order(byte_size: :desc).first
+    end
+
+    private
+
+    def recent_blobs
+      ActiveStorage::Blob.order(created_at: :desc).limit(5)
     end
   end
 end

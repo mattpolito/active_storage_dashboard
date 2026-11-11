@@ -1,9 +1,14 @@
-<%# locals: (id:, src:, stat: nil) %>
+<%# locals: (id:, src:, stat: nil, target: nil) %>
 
-<turbo-frame id="<%= id %>" src="<%= src %>" loading="lazy">
+<%= tag.turbo_frame(
+    id: id,
+    loading: "lazy",
+    src: src,
+    target: target
+) do %>
   <% if stat %>
     <div class="stat-card-value lazy-loading">&hellip;</div>
   <% else %>
     <p class="no-data-message lazy-loading">Loading&hellip;</p>
   <% end %>
-</turbo-frame>
+<% end %>

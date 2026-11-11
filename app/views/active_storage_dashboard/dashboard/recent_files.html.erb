@@ -1,0 +1,47 @@
+<turbo-frame id="dashboard_recent_files">
+  <% if @recent_blobs.any? %>
+    <div class="recent-files-grid">
+      <% @recent_blobs.each do |blob| %>
+        <div class="recent-file-card">
+          <div class="file-preview">
+            <% if blob.content_type&.start_with?('image/') %>
+              <img
+                src="<%= download_blob_path(blob, disposition: 'inline') %>"
+                alt="<%= blob.filename %>"
+                class="file-thumbnail"
+              >
+            <% elsif blob.content_type&.start_with?('video/') %>
+              <div class="file-type-icon video-icon">VID</div>
+            <% elsif blob.content_type&.start_with?('audio/') %>
+              <div class="file-type-icon audio-icon">AUD</div>
+            <% elsif blob.content_type&.start_with?('application/pdf') %>
+              <div class="file-type-icon pdf-icon">PDF</div>
+            <% else %>
+              <div class="file-type-icon">
+                <%= blob.content_type&.split('/')&.last&.upcase&.first(3) || 'FILE' %>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="file-info">
+            <h3
+              class="file-name filename-truncate"
+              title="<%= blob.filename %>"
+            >
+              <%= blob.filename %>
+            </h3>
+
+            <div class="file-meta">
+              <span class="file-size"><%= format_bytes(blob.byte_size) %></span>
+              <span class="file-date"><%= blob.created_at.strftime('%Y-%m-%d %H:%M') %></span>
+            </div>
+
+            <a href="<%= blob_path(blob) %>" class="view-details-btn">View Details</a>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="no-data-message">No files found.</p>
+  <% end %>
+</turbo-frame>
